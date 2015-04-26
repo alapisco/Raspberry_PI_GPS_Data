@@ -1,0 +1,25 @@
+#!/bin/bash
+
+PID_FILE=/home/pi/.pid
+
+case "$1" in
+
+start)
+
+echo "Reading GPS data"
+/home/pi/gpsData.sh &
+echo $! > $PID_FILE
+
+
+;;
+
+stop)
+
+echo "Killing GPS data read process"
+PID=$(cat $PID_FILE)
+kill -9 $PID
+echo "Done."
+
+;;
+
+esac
