@@ -1,5 +1,6 @@
 #!/bin/bash
 
+LOG_FILE=/home/pi/gps/logs/gpsDataParser.log
 
 #Gps data file
 GPS_DATA_FILE="/home/pi/gps/gpsData"
@@ -31,6 +32,8 @@ echo "scale=5; ($hours + $degrees/60) * $mult" | bc -l
 }
 
 
+echo "Started Reading"  | tee -a  $LOG_FILE
+date  | tee -a  $LOG_FILE
 
 while read line; do
 
@@ -63,34 +66,23 @@ while read line; do
   MAGNETIC_VARIATION=$(echo $line | awk -F"," '{print $11}' )
   MODE=$(echo $line | awk -F"," '{print $12}' )
   CHECKSUM=$(echo $line | awk -F"," '{print $13}' )
+  
+  LATITUDE_DEG=$(NMEAtoDegrees $LATITUDE $NSIndicator)
+  LONGITUDE_DEG=$(NMEAtoDegrees $LONGITUDE $EWIndicator)
+  ID_DRIVER="001"
+  ID_TRIP="1"
+  ON_ROUTE="0"
+  COCKPIT_VARIANCE="2.332"
+  DATE=$(date --date="3 hours ago" +"%Y-%m-%d")
+  TIME=$(date --date="3 hours ago" +"%T")
+  
 
-  if [ ! -z $LATITUDE ];then
-   
-   LATITUDE_DEG=$(NMEAtoDegrees $LATITUDE $NSIndicator)
-   LONGITUDE_DEG=$(NMEAtoDegrees $LONGITUDE $EWIndicator)
-   ID_DRIVER="001"
-   ID_TRIP="1"
-   ON_ROUTE="0"
-   COCKPIT_VARIANCE="2.332"
-
-   # Convert UTC date time to our local date time in GDL
-   DAY=$(echo $DATE | cut -c 1-2 )
-   MONTH=$(echo $DATE | cut -c 3-4 )
-   DATE=$(echo "2015-"$MONTH"-"$DAY)
-
-   HH=$(echo $UTC_TIME | cut -c 1-2 )
-   MM=$(echo $UTC_TIME | cut -c 3-4 )
-   SS=$(echo $UTC_TIME | cut -c 5-6 )
-   TIME=$(echo $HH":"$MM":"$SS)
-
-   DATE=$(date -d "$DATE $TIME UTC-5hours" +"%Y-%m-%d")
-   TIME=$(date -d "$DATE $TIME UTC-5hours" +"%T")
-
-  echo "$ID_DRIVER,$ID_TRIP,$ON_ROUTE,$DATE,$TIME,$LATITUDE_DEG,$LONGITUDE_DEG,$SpeedOverGround,$CourseOverGround,$MAGNETIC_VARIATION,$COCKPIT_VARIANCE" >> $GPS_DATA_FILE
+  echo "$ID_DRIVER,$ID_TRIP,$ON_ROUTE,$DATE,$UTC_TIME,$LATITUDE_DEG,$LONGITUDE_DEG,$SpeedOverGround,$CourseOverGround,$MAGNETIC_VARIATION,$COCKPIT_VARIANCE" >> $GPS_DATA_FILE
   fi
-  fi
+
  fi
 
-
-
 done < $GPS_SERIAL_INTERFACE
+
+echo "Finished process"  | tee -a  $LOG_FILE
+date  | tee -a  $LOG_FILE

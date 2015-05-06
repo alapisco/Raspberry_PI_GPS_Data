@@ -2,8 +2,6 @@
 
 LOG_FILE=/home/pi/gps/logs/gpsDataService.log
 
-date  | tee -a  $LOG_FILE
-
 case "$1" in
 
 start)

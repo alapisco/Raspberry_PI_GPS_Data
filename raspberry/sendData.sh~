@@ -1,17 +1,21 @@
 #!/bin/bash
 
-LOG_FILE=/home/james/git/amarguetix/tests/gps/logs/sendData.log
+LOG_FILE=/home/pi/gps/logs/sendData.log
+LOG_FILE=/home/james/sendData.log
 
-HISTORY_FOLDER=/home/james/git/amarguetix/tests/gps/history
+HISTORY_FOLDER=/home/pi/gps/history
+HISTORY_FOLDER=/home/james/git/amarguetix/amarguetix/raspberry/history
 
 #tmp directory
-tmpDir=/home/james/git/amarguetix/tests/gps/tmp/
+tmpDir=/home/pi/gps/tmp/
+tmpDir=/home/james/git/amarguetix/amarguetix/raspberry/tmp
 
 # Car identifier
 CAR_ID=JHY1636
 
 # Directory where the gps data file is
-dataDir=/home/james/git/amarguetix/tests/gps/
+dataDir=/home/pi/gps
+dataDir=/home/james/git/amarguetix/amarguetix/samples
 
 # Gps data file
 dataFile=gpsData
@@ -34,18 +38,20 @@ cp $dataDir/$dataFile $tmpDir/$dirName/$DATE
 cd $tmpDir
 
 #Empty gpsData
-echo "" > $dataDir/$dataFile
+#echo "" > $dataDir/$dataFile
 
 
 #Compressing data file
 tarFile=$dirName".tar.gz"
 tar -czf $tarFile $dirName
 
-#Delete tmp directory
-rm -rf $dirName
-
-#Iterate all tar.gz files 
 for tarFile in  *.tar.gz ; do 
+
+
+ 
+
+
+
 
 echo "Sending file $tarFile"  | tee -a  $LOG_FILE
 
@@ -65,3 +71,8 @@ fi
 
 done
 
+
+
+
+#clear tmp contents
+#rm -rf $tmpDir/*
