@@ -3,6 +3,8 @@
 The code in this repository contains bash scripts that interacts with the GPS Hardware 
 for the raspberry : https://www.adafruit.com/products/2324
 
+and a php script that receves this data for db storage
+
 
 ## Raspberry side (client)
 
